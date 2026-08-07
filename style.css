@@ -296,3 +296,55 @@ button:active {
         max-width: 420px;
     }
 }
+
+.login-container {
+    width: 350px;
+    margin: 150px auto;
+    text-align: center;
+    background: #0b1f4d;
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+}
+
+.login-container input {
+    width: 90%;
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 6px;
+    border: none;
+}
+
+.login-container button {
+    background: #ffffff;
+    color: #0b1f4d;
+    padding: 12px 25px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+#error {
+    color: #ffaaaa;
+}
+
+.password-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.password-container input {
+    flex: 1;
+}
+
+.password-container button {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    font-size: 13px;
+    background: #ffffff;
+    color: #0b1f4d;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}

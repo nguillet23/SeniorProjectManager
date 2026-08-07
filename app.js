@@ -1,104 +1,120 @@
-let tickets = JSON.parse(localStorage.getItem("tickets")) || [];
+const supabaseUrl = "https://jsqeidcgaafajsticsvl.supabase.co";
 
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpzcWVpZGNnYWFmYWpzdGljc3ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMjY2NzMsImV4cCI6MjEwMTcwMjY3M30.RScqRFieydVv5XTH5Q18Bnetr8iFimYB5Mnch4y_oS8";
 
-function save() {
-    localStorage.setItem("tickets", JSON.stringify(tickets));
+const db = window.supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+);
+
+let tickets = [];
+
+async function loadTickets() {
+    const { data, error } = await db
+        .from("tickets")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    tickets = data;
+    render();
 }
 
-
-function openModal(){
-    document.getElementById("modal").style.display="flex";
+function openModal() {
+    document.getElementById("modal").style.display = "flex";
 }
 
-
-function closeModal(){
-    document.getElementById("modal").style.display="none";
+function closeModal() {
+    document.getElementById("modal").style.display = "none";
 }
 
+async function createTicket() {
 
-function createTicket(){
-
-    let ticket = {
-
-        id: Date.now(),
-
-        title:
-        document.getElementById("title").value,
-
-        description:
-        document.getElementById("description").value,
-
-        priority:
-        document.getElementById("priority").value,
-
-        deadline:
-        document.getElementById("deadline").value,
-
-        status:"todo"
-
+    const ticket = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+        assigned_to: document.getElementById("assigned_to").value,
+        priority: document.getElementById("priority").value,
+        deadline: document.getElementById("deadline").value,
+        status: "todo"
     };
 
+    const { error } = await db
+        .from("tickets")
+        .insert(ticket);
 
-    tickets.push(ticket);
+    if (error) {
+        console.error(error);
+        return;
+    }
 
-    save();
-
-    render();
+    document.getElementById("title").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("assigned_to").value = "";
+    document.getElementById("priority").value = "Low";
+    document.getElementById("deadline").value = "";
 
     closeModal();
-
+    loadTickets();
 }
 
+async function moveTicket(id, newStatus) {
 
+    const { error } = await db
+        .from("tickets")
+        .update({
+            status: newStatus
+        })
+        .eq("id", id);
 
-function moveTicket(id,newStatus){
+    if (error) {
+        console.error(error);
+        return;
+    }
 
-    let ticket =
-    tickets.find(t=>t.id===id);
-
-    ticket.status=newStatus;
-
-    save();
-
-    render();
-
+    loadTickets();
 }
 
+async function deleteTicket(id) {
 
+    const { error } = await db
+        .from("tickets")
+        .delete()
+        .eq("id", id);
 
-function deleteTicket(id){
+    if (error) {
+        console.error(error);
+        return;
+    }
 
-    tickets =
-    tickets.filter(t=>t.id!==id);
-
-    save();
-
-    render();
-
+    loadTickets();
 }
 
-
-
-function render(){
+function render() {
 
     document.querySelectorAll(".tickets")
-    .forEach(x=>x.innerHTML="");
+        .forEach(x => x.innerHTML = "");
 
+    tickets.forEach(ticket => {
 
-    tickets.forEach(ticket=>{
+        const card = document.createElement("div");
 
+        card.className =
+            "ticket priority-" + ticket.priority.toLowerCase();
 
-        let card=document.createElement("div");
-
-        card.className=
-        "ticket priority-"+ticket.priority.toLowerCase();
-
-
-        card.innerHTML=`
+        card.innerHTML = `
 
         <h3>${ticket.title}</h3>
 
-        <p>${ticket.description}</p>
+        <p>${ticket.description || ""}</p>
+
+        <b>Assigned:</b> ${ticket.assigned_to || "Nobody"}
+
+        <br>
 
         <b>Priority:</b> ${ticket.priority}
 
@@ -108,52 +124,98 @@ function render(){
 
         <br><br>
 
-
         ${
-        ticket.status !== "todo"
-        ?
-        `<button onclick="moveTicket(${ticket.id},'todo')">
-        To Do
-        </button>`
-        :""
+            ticket.status !== "todo"
+            ? `<button onclick="moveTicket('${ticket.id}','todo')">
+            To Do
+            </button>`
+            : ""
         }
 
-
         ${
-        ticket.status !== "progress"
-        ?
-        `<button onclick="moveTicket(${ticket.id},'progress')">
-        Progress
-        </button>`
-        :""
+            ticket.status !== "progress"
+            ? `<button onclick="moveTicket('${ticket.id}','progress')">
+            Progress
+            </button>`
+            : ""
         }
 
-
         ${
-        ticket.status !== "done"
-        ?
-        `<button onclick="moveTicket(${ticket.id},'done')">
-        Done
-        </button>`
-        :""
+            ticket.status !== "done"
+            ? `<button onclick="moveTicket('${ticket.id}','done')">
+            Done
+            </button>`
+            : ""
         }
 
-
-        <button onclick="deleteTicket(${ticket.id})">
+        <button onclick="deleteTicket('${ticket.id}')">
         Delete
         </button>
 
         `;
 
-
         document
-        .querySelector(`#${ticket.status} .tickets`)
-        .appendChild(card);
-
+            .querySelector(`#${ticket.status} .tickets`)
+            .appendChild(card);
 
     });
+}
+
+loadTickets();
+
+async function login(){
+
+    const password =
+    document.getElementById("password").value;
+
+
+    const {data,error} = await db
+        .from("site_access")
+        .select("password_hash")
+        .eq("id",1)
+        .single();
+
+
+    if(error){
+        console.error(error);
+        return;
+    }
+
+
+    if(password === data.password_hash){
+
+        localStorage.setItem("loggedIn","true");
+
+        window.location.href="index.html";
+
+    } else {
+
+        document.getElementById("error").innerText =
+        "Incorrect password";
+
+    }
 
 }
 
+function togglePassword(){
 
-render();
+    const password =
+    document.getElementById("password");
+
+    const button =
+    event.target;
+
+
+    if(password.type === "password"){
+
+        password.type = "text";
+        button.innerText = "Hide";
+
+    } else {
+
+        password.type = "password";
+        button.innerText = "Show";
+
+    }
+
+}

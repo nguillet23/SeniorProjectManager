@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senior Design Login</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <h1>Senior Design Tracker</h1>
+
+    <div class="password-container">
+
+    <input 
+        id="password"
+        type="password"
+        placeholder="Enter password"
+    >
+
+    <button type="button" onclick="togglePassword()">
+        Show
+    </button>
+
+    </div>
+
+    <button onclick="login()">
+        Enter
+    </button>
+
+    <p id="error"></p>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+
+</body>
+
+</html>
