@@ -33,7 +33,6 @@
 
 </main>
 
-
 <div class="modal" id="modal">
 
     <div class="modal-content">
@@ -44,12 +43,15 @@
 
         <textarea id="description" placeholder="Description"></textarea>
 
+        <input id="assigned_to" placeholder="Assigned to">
+
         <select id="priority">
-            <option>Low</option>
-            <option>Medium</option>
-            <option>High</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
         </select>
 
+        <label>Deadline</label>
         <input id="deadline" type="date">
 
         <button onclick="createTicket()">Create</button>
@@ -60,7 +62,8 @@
 </div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
 
 </body>
-</html>
+</html>>
