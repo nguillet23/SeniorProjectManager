@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senior Design Project Manager</title>
     <link rel="stylesheet" href="style.css">
+
+    <script>
+    if(localStorage.getItem("loggedIn") !== "true"){
+        window.location.href = "login.html";
+    }
+    </script>
 </head>
 
 <body>
