@@ -219,3 +219,34 @@ function togglePassword(){
     }
 
 }
+
+function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "index.html";
+}
+
+async function login(){
+    const password = document.getElementById("password").value;
+    
+    const {data, error} = await db
+        .from("site_access")
+        .select("password_hash")
+        .eq("id", 1)
+        .single();
+
+    if(error){
+        console.error("Database error:", error);
+        return;
+    }
+
+    console.log("Entered password:", password);
+    console.log("Stored password:", data.password_hash);
+    console.log("Match?", password === data.password_hash);
+
+    if(password === data.password_hash){
+        localStorage.setItem("loggedIn", "true");
+        window.location.href = "dashboard.html";
+    } else {
+        document.getElementById("error").innerText = "Incorrect password";
+    }
+}
