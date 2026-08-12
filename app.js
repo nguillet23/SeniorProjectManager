@@ -163,40 +163,6 @@ function render() {
 
 loadTickets();
 
-async function login(){
-
-    const password =
-    document.getElementById("password").value;
-
-
-    const {data,error} = await db
-        .from("site_access")
-        .select("password_hash")
-        .eq("id",1)
-        .single();
-
-
-    if(error){
-        console.error(error);
-        return;
-    }
-
-
-    if(password === data.password_hash){
-
-        localStorage.setItem("loggedIn","true");
-
-        window.location.href="index.html";
-
-    } else {
-
-        document.getElementById("error").innerText =
-        "Incorrect password";
-
-    }
-
-}
-
 function togglePassword(){
 
     const password =
